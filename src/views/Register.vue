@@ -1,7 +1,7 @@
 <template>
   <div class="backimg" id="content">
-    <div class="reg">
-      <div class="text">
+    <div class="reg animate__animated animate__fadeInDownBig" >
+      <div class="text" >
         <span>注册</span>
       </div>
       <div>
@@ -29,6 +29,7 @@
   background: url("/images/backimg.jpg") no-repeat;
   background-size: cover;
   background-attachment: fixed;
+  text-align: center;
 }
 .text{
   margin-top: 40px;
@@ -43,10 +44,13 @@
   width: 500px;
   height: 350px;
   background: rgba(00, 00, 00, 0.3);
+  
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
 }
 .inp {
   margin-top: 30px;
