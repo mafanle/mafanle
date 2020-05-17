@@ -7,10 +7,12 @@
       <el-col :span="11">
         <div>
           <el-input placeholder="发现更多" v-model="input" size="small" class="my-input"></el-input>
-          <el-button icon="el-icon-search" circle size="small" class="my-search" @click="search"></el-button>
+          <div class="searchct">
+            <el-button icon="el-icon-search" circle size="small" class="my-search" @click="search"></el-button>
+          </div>
         </div>
       </el-col>
-      <el-col :pull='1'  :span="9" v-if="show" justify="start">
+      <el-col :pull="1" :span="9" v-if="!$store.state.isLogined" justify="start">
         <div>
           <ul>
             <li>
@@ -27,7 +29,7 @@
         <div class="daohang">
           <ul @mouseover="hello">
             <li>首页</li>
-            <li :data-index="'123'">
+            <li :data-index="'my'">
               我的
               <transition
                 enter-active-class="animate__animated animate__fadeIn"
@@ -37,11 +39,11 @@
                   class="shiyan"
                   @mouseenter="mylist"
                   @mouseleave="handleHide"
-                  v-if="xianshi=='fuck'"
+                  v-if="xianshi=='my'"
                 ></div>
               </transition>
             </li>
-            <li :data-index="'fuck'">
+            <li :data-index="'xiaoxi'">
               消息
               <transition
                 enter-active-class="animate__animated animate__fadeIn"
@@ -51,7 +53,7 @@
                   class="shiyan2"
                   @mouseenter="myxingxi"
                   @mouseleave="handleHide"
-                  v-if="xianshi=='123'"
+                  v-if="xianshi=='xiaoxi'"
                 ></div>
               </transition>
             </li>
@@ -64,9 +66,13 @@
 </template>
 
 <style scoped>
-.my-search {
+.searchct {
   position: relative;
+}
+.my-search {
+  position: absolute;
   right: 35px;
+  top: -46px;
   border: none;
 }
 .my-input {
@@ -78,20 +84,22 @@ a {
   text-decoration: none;
 }
 .shiyan {
-  width: 100px;
-  height: 100px;
+  width: 300px;
+  height: 350px;
   background: aqua;
   position: absolute;
-  right: 216px;
-  top: 41px;
+  right: 24px;
+  top: 51px;
+  z-index: 1000;
 }
 .shiyan2 {
-  width: 100px;
-  height: 100px;
+  width: 125px;
+  height: 200px;
   background: chartreuse;
   position: absolute;
-  right: 70px;
-  top: 41px;
+  right: 10px;
+  top: 51px;
+  z-index: 1000;
 }
 .header {
   width: 100%;
@@ -118,7 +126,6 @@ ul li {
 export default {
   data() {
     return {
-      show: true,
       xianshi: "",
       xiao: false,
       input: ""
@@ -135,10 +142,10 @@ export default {
       this.xianshi = "";
     },
     myxingxi() {
-      this.xianshi = "123";
+      this.xianshi = "xiaoxi";
     },
     mylist() {
-      this.xianshi = "fuck";
+      this.xianshi = "my";
     },
     search() {
       this.axios.get("/search?search=" + this.input).then(res => {

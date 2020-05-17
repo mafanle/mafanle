@@ -8,46 +8,75 @@
         <span></span>
       </div>
       <div class="txt">
-        <input type="password" v-model="password"  placeholder="密码
+        <input type="password" v-model="password" placeholder="密码
       " />
         <span></span>
       </div>
       <input type="submit" name value="ENTER" @click="login" />
       <div class="hello">
         没有账号?
-        <a href="#">立即注册</a>
+        <router-link to="/register">立即注册</router-link>
       </div>
     </div>
     <div v-show="xianshi">你妈死了</div>
   </div>
 </template>
 <script>
+import { mapMutations } from "vuex";
 export default {
-    data(){
-        return{
-            username:12345,
-            password:123,
-            xianshi:false
-        }
-    },
-    methods:{
-        login(){
-            this.axios.get('/hello').then(
-                res=>{
-                     if (res.data.code==1) {
-                         this.$router.push('/')
-                     }else{
-                         this.xianshi = true
-                     }
-                }
-            )
-           
-        }
+  data() {
+    return {
+      username: "",
+      password: "",
+      xianshi: false
+    };
+  },
+  methods: {
+    ...mapMutations(["logined"]),
+    login() {
+      this.axios
+        .post(
+          "/login",
+          "username=" + this.username + "&password=" + this.password
+        )
+        .then(res => {
+          if (res.data.code == 0) {
+            this.$message("账号或密码错误");
+          } else {
+             var result = res.data.result[0]
+             console.log(result);
+             
+            
+            //登录成功 修改state的状态
+            this.logined({
+              id: result.yid,
+              username: result.username,
+              userimg: result.userimg
+            });
+            //将服务器返回的id,username等相关信息存储到webstorage
+            localStorage.setItem("id", result.yid);
+            localStorage.setItem("username",result.username);
+            localStorage.setItem("userimg", result.userimg);
+            localStorage.setItem("islogin", true);
+            if (this.$route.query.path) {
+              this.$router.push(this.$route.query.path);
+            } else {
+              this.$router.push('/')
+            }
+          }
+        });
     }
-}
+  },
+  mounted(){
+    console.log(localStorage.getItem('islogin'));
+    
+    if (localStorage.getItem('islogin')) {
+       this.$router.push('/')
+    }
+  }
+};
 </script>
 <style  scoped>
-
 .content {
   min-height: 100vh;
   background-image: linear-gradient(120deg, #4b7bec, #fc5c65);

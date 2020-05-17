@@ -19,6 +19,7 @@
         </div>
       </div>
     </div>
+  
   </div>
 </template>
 
@@ -30,6 +31,12 @@
   background-size: cover;
   background-attachment: fixed;
   text-align: center;
+}
+.tishi{
+  width: 200px;
+  height: 200px;
+  background: aliceblue;
+
 }
 .text{
   margin-top: 40px;
@@ -72,9 +79,10 @@
 export default {
   data(){
     return{
-      username:'123',
-      pwd:'123',
-      pwds:'123'
+      username:'',
+      pwd:'',
+      pwds:'',
+      tishi:false
     }
   },
   methods: {
@@ -90,10 +98,25 @@ export default {
       }
     },
     reg(){
-      var that = this      
-      this.axios.post('/reg','username='+that.username+'&pwd='+that.pwd).then(res=>{
-        console.log(res);
-      })
+      var username = this.username.trim()
+      var pwd = this.pwd.trim()
+      var pwds = this.pwds.trim()
+      console.log(username);
+      
+      if (username == '' || pwd=='' || pwds=='') {
+        this.$message('请输入完整');
+      }else if (pwd != pwds) {
+        this.$message('密码不一致');
+      }else {
+         this.axios.post('/reg','username=' + username + '&password=' + pwd).then(res=>{
+          if (res.data.code == 0) {
+            this.$message('用户名已经存在');
+          }else{
+             this.$router.push('/login')
+          } 
+         })
+      }
+      
     }
   },
   mounted() {
