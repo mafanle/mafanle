@@ -7,7 +7,7 @@
         <img src="/images/shiyan3.png" alt />
         <div class="grxx">
           <p>{{username}}</p>
-          <input v-model="qianming" type="text" />
+          <input @blur="xiugai" v-model="qianming" type="text" />
         </div>
       </header>
     </div>
@@ -22,17 +22,34 @@ export default {
       qianming: ""
     };
   },
+  methods: {
+    xiugai() {
+      this.axios
+        .get("/xiugai?qianming=" + this.qianming + "&yid=" + this.id)
+        .then(res => {
+          if (res.data) {
+            this.$message("修改成功");
+          } else {
+            this.$message("修改失败 稍后再试");
+          }
+        });
+    }
+  },
   computed: {
     ...mapState(["id", "username"])
   },
   mounted() {
+    
+    this.axios.get("/my/" + this.id).then(res => {
+      this.qianming = res.data[0].usersigna;
+    });
     //写在mounted或者activated生命周期内即可
     window.onbeforeunload = e => {
       //刷新时弹出提示
       var data = new Date();
       localStorage.setItem("data", data.getTime());
-      console.log(data.getTime());
     };
+   
   }
 };
 </script>

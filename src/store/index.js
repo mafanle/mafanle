@@ -10,7 +10,7 @@ export default new Vuex.Store({
     username: localStorage.getItem('username') ? localStorage.getItem('username') : '',
     //用户是否登录
     isLogined: localStorage.getItem('islogin') ? localStorage.getItem('islogin') : false,
-    userimg :localStorage.getItem('userimg')?localStorage.getItem('userimg'):''
+    userimg :localStorage.getItem('userimg')?localStorage.getItem('userimg'):'',
   },
   mutations: {
     logined(state, payload) {

@@ -43,35 +43,36 @@ export default {
           if (res.data.code == 0) {
             this.$message("账号或密码错误");
           } else {
-             var result = res.data.result[0]
-             console.log(result);
-             
-            
+            var result = res.data.result[0];
+            console.log(result);
+
             //登录成功 修改state的状态
             this.logined({
               id: result.yid,
               username: result.username,
-              userimg: result.userimg
+              userimg: result.userimg,
+              usersigna: result.usersigna
             });
             //将服务器返回的id,username等相关信息存储到webstorage
             localStorage.setItem("id", result.yid);
-            localStorage.setItem("username",result.username);
+            localStorage.setItem("username", result.username);
             localStorage.setItem("userimg", result.userimg);
             localStorage.setItem("islogin", true);
+            localStorage.setItem("usersigna",result.usersigna);
             if (this.$route.query.path) {
               this.$router.push(this.$route.query.path);
             } else {
-              this.$router.push('/')
+              this.$router.push("/");
             }
           }
         });
     }
   },
-  mounted(){
-    console.log(localStorage.getItem('islogin'));
-    
-    if (localStorage.getItem('islogin')) {
-       this.$router.push('/')
+  mounted() {
+    console.log(localStorage.getItem("islogin"));
+
+    if (localStorage.getItem("islogin")) {
+      this.$router.push("/");
     }
   }
 };

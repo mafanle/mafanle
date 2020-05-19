@@ -133,7 +133,6 @@ export default {
   },
   methods: {
     hello(e) {
-      console.log(e.target.dataset.index);
       if (e.target.nodeName.toLowerCase() === "li") {
         this.xianshi = e.target.dataset.index;
       }

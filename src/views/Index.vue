@@ -3,18 +3,18 @@
     <toplist></toplist>
     <div class="content">
       <el-row>
-        <el-col v-for="(item,index) in list" :key="index" :span="6">
+        <el-col v-for="(item,index) in neirong" :key="index" :span="6">
           <div @click="show($event,index)" class="animate__animated animate__fadeInUp fuck">
             <div class="neirong">
-              <el-image :src="item.img" :data-index="index" lazy></el-image>
+              <el-image :src="item.trendsImg" :data-index="index" lazy></el-image>
               <div class="text" :data-index="index">
-                <div class="username">王家为</div>
+                <div class="username">{{item.username}}</div>
                 <div style=" clear: both;"></div>
                 <div class="zhengwen">
-                  <p>撒旦伟大时代萨达挖的啊撒大网的阿三大王大苏打哇大撒哇撒大sdsda</p>
+                  <p>{{item.trendsText}}</p>
                 </div>
                 <div class="time">
-                  <p>2小时前</p>
+                  <p>{{item.trendsTime.year+'年'+item.trendsTime.month+'月'+item.trendsTime.date+'日'+item.trendsTime.hour+':'+item.trendsTime.minute}}</p>
                 </div>
               </div>
             </div>
@@ -25,20 +25,20 @@
         <button class="mybutton" @click="jiazai">加载更多</button>
       </div>
     </div>
-    <div class="jumu" v-show="xianshi">
+    <div class="jumu" v-if="xianshi">
       <div class="guanbi" @click="guanbi">x</div>
       <div class="jmneirong">
         <div class="jmimg">
-          <img src="/images/shiyan1.jpg" alt />
+          <img :src="neirong[index].userimg" alt />
         </div>
         <div class="jmtext">
           <div class="avat">
-            <router-link to="/login">
-              <img src="/images/shiyan1.jpg" alt />
+            <router-link :to="`/my/${neirong[index].yid}`">
+              <img :src="neirong[index].trendsImg" alt />
             </router-link>
-            <router-link to="/login">hello</router-link>
+            <router-link  :to="`/my/${neirong[index].yid}`">{{neirong[index].username}}</router-link>
           </div>
-          <p>hello</p>
+          <p>{{neirong[index].trendsText}}</p>
         </div>
       </div>
     </div>
@@ -51,141 +51,49 @@
 export default {
   data() {
     return {
-      list: [
-        {
-          img: "/images/shiyan.jpg",
-          hello: 1
-        },
-        {
-          img: "/images/shiyan2.jpg",
-          hello: 11
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 12
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 13
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 14
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 15
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 16
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 17
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 18
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 19
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 20
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 1
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 1
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 1
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 1
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 1
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 1
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 1
-        }
-      ],
-      xianshi: false
+      xianshi: false,
+      neirong:[],
+      index:''
     };
   },
 
   methods: {
     show(e, index) {
       this.xianshi = true;
-      console.log(index);
+      this.index = index;
+      console.log(this.index);
+      
     },
     guanbi() {
       this.xianshi = false;
     },
     jiazai() {
-      this.list.push(
-        {
-          img: "/images/shiyan.jpg",
-          hello: 1
-        },
-        {
-          img: "/images/shiyan2.jpg",
-          hello: 11
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 12
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 13
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 14
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 15
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 16
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 17
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 18
-        },
-        {
-          img: "/images/shiyan.jpg",
-          hello: 19
-        }
-      );
+      
+    },
+    formatDate(now) {
+      var year = now.getFullYear(); //取得4位数的年份
+      var month = now.getMonth() + 1; //取得日期中的月份，其中0表示1月，11表示12月
+      var date = now.getDate(); //返回日期月份中的天数（1到31）
+      var hour = now.getHours(); //返回日期中的小时数（0到23）
+      var minute = now.getMinutes(); //返回日期中的分钟数（0到59）
+      var second = now.getSeconds(); //返回日期中的秒数（0到59）
+      return {year, month, date,hour,minute, second} 
     }
   },
   mounted() {
-          console.log(localStorage.getItem('data'));
-          
-    }
+    // console.log(localStorage.getItem('data'));
+    //定义一个时间戳变量
+     
+    this.axios.get('/huoqu').then(res=>{
+      var res = res.data 
+      console.log(res);
+      for (var key of res){
+        var time = new Date(key.trendsTime)
+         key.trendsTime =this.formatDate(time)
+      }
+      this.neirong = res
+    })
+  }
 };
 </script>
 <style scoped>
