@@ -19,6 +19,9 @@ export default new Vuex.Store({
       state.userimg = payload.userimg;
       state.isLogined = true
     },
+    uploadavat(state,payload){
+      state.userimg = payload.userimg
+    },
     getout(state) {
       state.id = 0
       state.username = '';

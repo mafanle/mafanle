@@ -13,7 +13,7 @@
         </div>
       </el-col>
       <el-col :pull="1" :span="9" v-if="!$store.state.isLogined" justify="start">
-        <div>
+        <div class="top">
           <ul>
             <li>
               <router-link to="/register">注册</router-link>
@@ -26,11 +26,13 @@
         </div>
       </el-col>
       <el-col :pull="1" :span="9" v-else class="weizhi">
-        <div class="daohang">
+        <div class="top">
           <ul @mouseover="hello">
-            <li>首页</li>
+            <li>
+              <router-link to="/">首页</router-link>
+            </li>
             <li :data-index="'my'">
-              我的
+              <router-link :data-index="'my'" to="/my">我的</router-link>
               <transition
                 enter-active-class="animate__animated animate__fadeIn"
                 leave-active-class="animate__animated animate__fadeOut"
@@ -40,22 +42,33 @@
                   @mouseenter="mylist"
                   @mouseleave="handleHide"
                   v-if="xianshi=='my'"
-                ></div>
+                >
+                  <div class="imgdiv">
+                    <router-link :data-index="'my'" to="/my">
+                      <img :src="userimg" alt />
+                    </router-link>
+                  </div>
+                  <div class="guanzhu">
+                    <table>
+                      <tr>
+                        <td>关注</td>
+                        <td>粉丝</td>
+                        <td>动态</td>
+                      </tr>
+                      <tr>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
               </transition>
             </li>
             <li :data-index="'xiaoxi'">
-              消息
-              <transition
-                enter-active-class="animate__animated animate__fadeIn"
-                leave-active-class="animate__animated animate__fadeOut"
-              >
-                <div
-                  class="shiyan2"
-                  @mouseenter="myxingxi"
-                  @mouseleave="handleHide"
-                  v-if="xianshi=='xiaoxi'"
-                ></div>
-              </transition>
+              <el-badge :value="200" :max="99" class="item">
+                <router-link :data-index="'xiaoxi'" to="/my">消息</router-link>
+              </el-badge>
             </li>
             <li>反馈</li>
           </ul>
@@ -65,7 +78,36 @@
   </div>
 </template>
 
-<style scoped>
+<style >
+.el-badge__content.is-fixed{
+  top:15px;
+}
+.guanzhu
+ {
+  display: flex;
+  justify-content: space-around;
+}
+td {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.guanzhu {
+  margin-top: 20px;
+}
+.imgdiv {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+.imgdiv img {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
 .searchct {
   position: relative;
 }
@@ -83,46 +125,45 @@ a {
   color: #57606f;
   text-decoration: none;
 }
+a:hover {
+  color: #ff7f50;
+}
 .shiyan {
+  border-radius: 4px;
   width: 300px;
   height: 350px;
-  background: aqua;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(00, 00, 00, 0.3);
   position: absolute;
   right: 24px;
   top: 51px;
   z-index: 1000;
+  text-align: center;
 }
-.shiyan2 {
-  width: 125px;
-  height: 200px;
-  background: chartreuse;
-  position: absolute;
-  right: 10px;
-  top: 51px;
-  z-index: 1000;
-}
+
 .header {
   width: 100%;
   border-bottom: #dfe4ea solid 0.5px;
 }
 .content {
-  width: 80%;
+  width: 1215px;
   height: 60px;
   line-height: 60px;
   font-size: larger;
   margin: 0 auto;
 }
-ul {
+.top ul {
   display: flex;
   justify-content: flex-end;
   font-size: 15px;
 }
-ul li {
+.top ul li {
   margin-right: 30px;
 }
 </style>
 
 <script>
+import { mapState } from "vuex";
 export default {
   data() {
     return {
@@ -131,9 +172,15 @@ export default {
       input: ""
     };
   },
+  computed: {
+    ...mapState(["id", "username", "userimg"])
+  },
   methods: {
     hello(e) {
-      if (e.target.nodeName.toLowerCase() === "li") {
+      if (
+        e.target.nodeName.toLowerCase() == "a" ||
+        e.target.nodeName.toLowerCase() === "li"
+      ) {
         this.xianshi = e.target.dataset.index;
       }
     },
@@ -151,6 +198,11 @@ export default {
         console.log(res);
       });
     }
+  },
+  mounted() {
+    this.axios.get("/hello").then(res => {
+      console.log(res);
+    });
   }
 };
 </script>

@@ -1,17 +1,19 @@
 <template>
   <div id="app">
     <toplist></toplist>
-    <div class="content">
-      <el-row>
-        <el-col v-for="(item,index) in neirong" :key="index" :span="6">
+    <!-- <div class="indexcontent">
+      <el-row type='flex' style="flex-wrap:wrap" >
+        <el-col  v-for="(item,index) in neirong" :key="index" :span="6">
           <div @click="show($event,index)" class="animate__animated animate__fadeInUp fuck">
             <div class="neirong">
               <el-image :src="item.trendsImg" :data-index="index" lazy></el-image>
               <div class="text" :data-index="index">
-                <div class="username">{{item.username}}</div>
+                <router-link
+                  :to="`/page/${neirong[index].yid}`"
+                >{{neirong[index].ename == ''?neirong[index].username:neirong[index].ename }}</router-link>
                 <div style=" clear: both;"></div>
                 <div class="zhengwen">
-                  <p>{{item.trendsText}}</p>
+                  <p class="contenttext">{{item.trendsText}}</p>
                 </div>
                 <div class="time">
                   <p>{{item.trendsTime.year+'年'+item.trendsTime.month+'月'+item.trendsTime.date+'日'+item.trendsTime.hour+':'+item.trendsTime.minute}}</p>
@@ -21,82 +23,75 @@
           </div>
         </el-col>
       </el-row>
-      <div>
-        <button class="mybutton" @click="jiazai">加载更多</button>
-      </div>
+      
+    </div>-->
+
+    <ni-hao :neirong="neirong"></ni-hao>
+    <div>
+      <button class="mybutton" @click="jiazai">加载更多</button>
     </div>
-    <div class="jumu" v-if="xianshi">
-      <div class="guanbi" @click="guanbi">x</div>
-      <div class="jmneirong">
-        <div class="jmimg">
-          <img :src="neirong[index].userimg" alt />
-        </div>
-        <div class="jmtext">
-          <div class="avat">
-            <router-link :to="`/my/${neirong[index].yid}`">
-              <img :src="neirong[index].trendsImg" alt />
-            </router-link>
-            <router-link  :to="`/my/${neirong[index].yid}`">{{neirong[index].username}}</router-link>
-          </div>
-          <p>{{neirong[index].trendsText}}</p>
-        </div>
-      </div>
-    </div>
+    
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-
+import NiHao from "../components/HelloWorld";
 export default {
   data() {
     return {
       xianshi: false,
-      neirong:[],
-      index:''
+      neirong: [],
+      index: "",
+      page: 0
     };
   },
-
+  components: {
+    NiHao
+  },
   methods: {
-    show(e, index) {
-      this.xianshi = true;
-      this.index = index;
-      console.log(this.index);
-      
-    },
-    guanbi() {
-      this.xianshi = false;
-    },
+   
     jiazai() {
-      
-    },
-    formatDate(now) {
-      var year = now.getFullYear(); //取得4位数的年份
-      var month = now.getMonth() + 1; //取得日期中的月份，其中0表示1月，11表示12月
-      var date = now.getDate(); //返回日期月份中的天数（1到31）
-      var hour = now.getHours(); //返回日期中的小时数（0到23）
-      var minute = now.getMinutes(); //返回日期中的分钟数（0到59）
-      var second = now.getSeconds(); //返回日期中的秒数（0到59）
-      return {year, month, date,hour,minute, second} 
+      this.page++;
+      this.axios.get("/jiazai?start=" + this.page).then(res => {
+        var res = res.data;
+        if (res.length == 0) {
+          this.$message("没有更多内容辣~");
+        } else {
+          for (var key of res) {
+            var time = new Date(key.trendsTime);
+            key.trendsTime = this.$date(time);
+            this.neirong.push(key);
+          }
+        }
+      });
     }
   },
   mounted() {
-    // console.log(localStorage.getItem('data'));
-    //定义一个时间戳变量
-     
-    this.axios.get('/huoqu').then(res=>{
-      var res = res.data 
+    this.page++;
+    this.axios.get("/huoqu?start=" + this.page).then(res => {
+      var res = res.data;
       console.log(res);
-      for (var key of res){
-        var time = new Date(key.trendsTime)
-         key.trendsTime =this.formatDate(time)
+
+      for (var key of res) {
+        console.log(key.trendsTime);
+
+        var time = new Date(key.trendsTime);
+        console.log(time);
+
+        key.trendsTime = this.$date(time);
       }
-      this.neirong = res
-    })
+      this.neirong = res;
+    });
   }
 };
 </script>
 <style scoped>
+.contenttext {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .mybutton:hover {
   background: #f1f2f6;
 }
@@ -106,13 +101,13 @@ export default {
   background: repeat;
   border: none;
 }
-.content {
-  width: 80%;
+.indexcontent {
+  width: 1215px;
   margin: 30px auto;
 }
 .neirong {
   margin: 5px;
-  border: 1px solid red;
+  border: 0.5px solid #dfe4ea;
 }
 img {
   width: 100%;
@@ -182,13 +177,18 @@ img {
   color: #57606f;
   text-decoration: none;
 }
+.text a {
+  color: #57606f;
+  text-decoration: none;
+}
 .avat {
   padding-bottom: 24px;
   padding-top: 24px;
   display: flex;
   line-height: 60px;
 }
-.avat a:hover {
+.avat a:hover,
+.text a:hover {
   color: #ff6348;
 }
 </style>

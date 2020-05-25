@@ -1,25 +1,37 @@
 <template>
   <div>
     <toplist></toplist>
-    <div class="content">
+    <div class="mycontent">
       <header class="imgcontent">
         <table></table>
-        <img src="/images/shiyan3.png" alt />
+       <div class="imgheader" @mouseenter="chuxian" @mouseleave="xiaoshi" >
+          <div class="xiugai" @click="changeimg"   v-show="touxiang">
+            更改头像
+          </div>
+          <img :src="$store.state.userimg" alt />
+       </div>
         <div class="grxx">
           <p>{{username}}</p>
           <input @blur="xiugai" v-model="qianming" type="text" />
         </div>
       </header>
     </div>
+    <my-content :neirong="neirong"></my-content>
+    
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
+import MyContent from "../components/HelloWorld";
 export default {
   data() {
     return {
-      qianming: ""
+      qianming: "",
+      neirong: [],
+      xianshi: false,
+      index: "",
+      touxiang:false
     };
   },
   methods: {
@@ -33,15 +45,37 @@ export default {
             this.$message("修改失败 稍后再试");
           }
         });
-    }
+    },
+     chuxian(){
+       this.touxiang = true
+     },
+     xiaoshi(){
+       this.touxiang = false
+     },
+     changeimg(){
+       alert('wuhu')
+     }
+  },
+  components: {
+    MyContent
   },
   computed: {
-    ...mapState(["id", "username"])
+    ...mapState(["id", "username", "userimg"])
   },
   mounted() {
-    
     this.axios.get("/my/" + this.id).then(res => {
-      this.qianming = res.data[0].usersigna;
+      console.log(res.data);
+      var res = res.data;
+      this.qianming = res.signa[0].usersigna;
+      var neirong = res.neirong;
+      for (var key of neirong) {
+        console.log(key.trendsTime);
+        var time = new Date(key.trendsTime);
+        key.trendsTime = this.$date(time);
+      }
+      this.neirong = neirong;
+      console.log(this.neirong);
+      
     });
     //写在mounted或者activated生命周期内即可
     window.onbeforeunload = e => {
@@ -49,21 +83,57 @@ export default {
       var data = new Date();
       localStorage.setItem("data", data.getTime());
     };
-   
   }
 };
 </script>
 <style scoped>
-.content {
-  width: 80%;
+.imgheader{
+  position: relative;
+}
+.xiugai{
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(00, 00, 00, 0.2);
+  left: 50px;
+  text-align: center;
+  line-height: 100px;
+  font-size: 14px;
+  color: #f1f2f6;
+}
+.jmdate {
+  font-size: 12px;
+  margin-bottom: 20px;
+  padding-left: 12px;
+}
+.neirong {
+  margin: 5px;
+  border: 0.5px solid #dfe4ea;
+}
+img {
+  width: 100%;
+}
+.text {
+  text-align: left;
+  margin-top: 16px;
+  font-size: 12px;
+  padding-left: 10px;
+  padding-bottom: 20px;
+}
+.zhengwen {
+  margin-bottom: 12px;
+  margin-top: 12px;
+}
+.mycontent {
+  width: 1215px;
   margin: 30px auto;
-  background: pink;
-  height: 100vh;
 }
 .imgcontent {
   height: 130px;
   padding-top: 120px;
-  background: chartreuse;
+  background: url("/images/mybackimg.jpg") center center no-repeat;
+  background-size: cover;
   position: relative;
 }
 .imgcontent img {
@@ -90,7 +160,77 @@ export default {
   width: 600px;
   margin-top: 10px;
 }
-.grxx input:hover {
-  background: rgba(00, 00, 00, 0.3);
+.grxx input:focus {
+  background:#ffffff
+}
+.text {
+  text-align: left;
+  margin-top: 16px;
+  font-size: 12px;
+  padding-left: 10px;
+  padding-bottom: 20px;
+}
+.zhengwen {
+  margin-bottom: 12px;
+  margin-top: 12px;
+}
+.jumu {
+  height: 100vh;
+  width: 100%;
+  background: rgba(00, 00, 00, 0.5);
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+}
+.guanbi {
+  width: 40px;
+  height: 40px;
+  font-size: 40px;
+  color: #fff;
+  float: right;
+}
+.jmneirong {
+  display: flex;
+  width: 950px;
+  background: #f1f2f6;
+  margin: auto;
+  position: absolute; /*设定水平和垂直偏移父元素的50%，
+再根据实际长度将子元素上左挪回一半大小*/
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.jmtext {
+  width: 35%;
+  background: #ffffff;
+  text-align: left;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.jmimg {
+  display: flex;
+  align-items: center;
+  min-height: 450px;
+  flex: 1;
+}
+.avat img {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.avat {
+  padding-bottom: 12px;
+  padding-top: 24px;
+  display: flex;
+  line-height: 60px;
+}
+.avat a:hover,
+.text a:hover {
+  color: #ff6348;
 }
 </style>
