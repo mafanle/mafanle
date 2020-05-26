@@ -4,12 +4,10 @@
     <div class="mycontent">
       <header class="imgcontent">
         <table></table>
-       <div class="imgheader" @mouseenter="chuxian" @mouseleave="xiaoshi" >
-          <div class="xiugai" @click="changeimg"   v-show="touxiang">
-            更改头像
-          </div>
+        <div class="imgheader" @mouseenter="chuxian" @mouseleave="xiaoshi">
+          <div class="xiugai" @click="drawer = true" v-show="touxiang">更改头像</div>
           <img :src="$store.state.userimg" alt />
-       </div>
+        </div>
         <div class="grxx">
           <p>{{username}}</p>
           <input @blur="xiugai" v-model="qianming" type="text" />
@@ -17,13 +15,16 @@
       </header>
     </div>
     <my-content :neirong="neirong"></my-content>
-    
+    <div>
+      <up-load @gaibian="guanbi" v-if="drawer"></up-load>
+    </div>
   </div>
 </template>
-
+ 
 <script>
 import { mapState } from "vuex";
 import MyContent from "../components/HelloWorld";
+import UpLoad from "../components/upload";
 export default {
   data() {
     return {
@@ -31,7 +32,8 @@ export default {
       neirong: [],
       xianshi: false,
       index: "",
-      touxiang:false
+      touxiang: false,
+      drawer: false
     };
   },
   methods: {
@@ -46,18 +48,19 @@ export default {
           }
         });
     },
-     chuxian(){
-       this.touxiang = true
-     },
-     xiaoshi(){
-       this.touxiang = false
-     },
-     changeimg(){
-       alert('wuhu')
-     }
+    chuxian() {
+      this.touxiang = true;
+    },
+    xiaoshi() {
+      this.touxiang = false;
+    },
+    guanbi(data) {
+      this.drawer = data;
+    }
   },
   components: {
-    MyContent
+    MyContent,
+    UpLoad
   },
   computed: {
     ...mapState(["id", "username", "userimg"])
@@ -75,7 +78,6 @@ export default {
       }
       this.neirong = neirong;
       console.log(this.neirong);
-      
     });
     //写在mounted或者activated生命周期内即可
     window.onbeforeunload = e => {
@@ -87,10 +89,10 @@ export default {
 };
 </script>
 <style scoped>
-.imgheader{
+.imgheader {
   position: relative;
 }
-.xiugai{
+.xiugai {
   position: absolute;
   width: 100px;
   height: 100px;
@@ -161,7 +163,7 @@ img {
   margin-top: 10px;
 }
 .grxx input:focus {
-  background:#ffffff
+  background: #ffffff;
 }
 .text {
   text-align: left;
