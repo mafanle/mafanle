@@ -55,7 +55,9 @@ export default {
       this.page++;
       this.axios.get("/jiazai?start=" + this.page).then(res => {
         var res = res.data;
-        if (res.length == 0) {
+        console.log(res);
+        
+        if (res.code==0) {
           this.$message("没有更多内容辣~");
         } else {
           for (var key of res) {
@@ -71,13 +73,9 @@ export default {
     this.page++;
     this.axios.get("/huoqu?start=" + this.page).then(res => {
       var res = res.data;
-      console.log(res);
-
       for (var key of res) {
-        console.log(key.trendsTime);
 
         var time = new Date(key.trendsTime);
-        console.log(time);
 
         key.trendsTime = this.$date(time);
       }

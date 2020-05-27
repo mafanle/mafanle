@@ -16,6 +16,9 @@
     </div>
     <my-content :neirong="neirong"></my-content>
     <div>
+      <button class="mybutton" @click="jiazai">加载更多</button>
+    </div>
+    <div>
       <up-load @gaibian="guanbi" v-if="drawer"></up-load>
     </div>
   </div>
@@ -33,7 +36,8 @@ export default {
       xianshi: false,
       index: "",
       touxiang: false,
-      drawer: false
+      drawer: false,
+      page:0
     };
   },
   methods: {
@@ -56,6 +60,21 @@ export default {
     },
     guanbi(data) {
       this.drawer = data;
+    },
+    jiazai() {
+      this.page++;
+      this.axios.get("/myjiazai?id" +this.id+"&page="+this.page).then(res => {
+        var res = res.data;
+        if (res.code == 0) {
+          this.$message("没有更多内容辣~");
+        } else {
+          for (var key of res) {
+            var time = new Date(key.trendsTime);
+            key.trendsTime = this.$date(time);
+            this.neirong.push(key);
+          }
+        }
+      });
     }
   },
   components: {
@@ -66,18 +85,16 @@ export default {
     ...mapState(["id", "username", "userimg"])
   },
   mounted() {
-    this.axios.get("/my/" + this.id).then(res => {
-      console.log(res.data);
+    this.page++
+    this.axios.get("/my?id="+this.id+'&page='+this.page).then(res => {
       var res = res.data;
       this.qianming = res.signa[0].usersigna;
       var neirong = res.neirong;
       for (var key of neirong) {
-        console.log(key.trendsTime);
         var time = new Date(key.trendsTime);
         key.trendsTime = this.$date(time);
       }
       this.neirong = neirong;
-      console.log(this.neirong);
     });
     //写在mounted或者activated生命周期内即可
     window.onbeforeunload = e => {
@@ -91,6 +108,12 @@ export default {
 <style scoped>
 .imgheader {
   position: relative;
+}
+.mybutton {
+  width: 60%;
+  height: 35px;
+  background: repeat;
+  border: none;
 }
 .xiugai {
   position: absolute;

@@ -200,9 +200,7 @@ export default {
     }
   },
   mounted() {
-    this.axios.get("/hello").then(res => {
-      console.log(res);
-    });
+ 
   }
 };
 </script>

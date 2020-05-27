@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       xianshi: false,
-      neirong: [],
+      nr: [],
       index: "",
       page: 0
     };
@@ -67,7 +67,7 @@ export default {
   },
   watch: {
     neirong(val) {
-      this.neirong = val;
+      this.nr = val;
     }
   }
 };
